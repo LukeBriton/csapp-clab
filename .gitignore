@@ -3,3 +3,6 @@
 
 # Ignore intermediate files during compilation
 *.o
+*~
+qtest
+*.dSYM
