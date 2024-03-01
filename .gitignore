@@ -1,2 +1,5 @@
 # Ignore Vim temporary file
 *.swp
+
+# Ignore intermediate files during compilation
+*.o
