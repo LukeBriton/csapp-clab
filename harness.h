@@ -28,7 +28,7 @@ bool has_called_malloc();
 size_t allocation_check();
 
 /* Probability of malloc failing, expressed as percent */
-int fail_probability;
+extern int fail_probability;
 
 /*
   Set/unset cautious mode.
