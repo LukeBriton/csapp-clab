@@ -22,6 +22,14 @@
 */
 queue_t *q_new()
 {
+    queue_t *q = malloc(sizeof(queue_t)); 
+    if(q != NULL)
+    {
+        q->head = NULL;
+        q->tail = NULL;
+        q->size = 0;
+        return q;
+    }
     /* Remember to handle the case if malloc returned NULL */
     return NULL;
 }
@@ -29,6 +37,17 @@ queue_t *q_new()
 /* Free all storage used by queue */
 void q_free(queue_t *q)
 {
+    if(q == NULL)
+        return;
+    list_ele_t *present = q->head;
+    list_ele_t *next;
+    while(present)
+    {
+        next = present->next;
+        free(present);
+        present = next;
+    }
+    free(q);
     /* Remember to free the queue structue and list elements */
 }
 
@@ -39,6 +58,17 @@ void q_free(queue_t *q)
  */
 bool q_insert_head(queue_t *q, int v)
 {
+    if(q == NULL)
+        return false;
+    list_ele_t *inserted = malloc(sizeof(list_ele_t)); 
+    if(inserted == NULL)
+        return false;
+    inserted->next = q->head;
+    inserted->value = v;
+    q->head = inserted; // Once misplaced
+    if(q->size == 0)
+        q->tail = q->head;
+    q->size ++;
     /* What should you do if the q is NULL? */
     /* What if malloc returned NULL? */
     return true;
@@ -52,8 +82,26 @@ bool q_insert_head(queue_t *q, int v)
  */
 bool q_insert_tail(queue_t *q, int v)
 {
+    if(q == NULL)
+        return false;
+    list_ele_t *inserted = malloc(sizeof(list_ele_t)); 
+    if(inserted == NULL)
+        return false;
+    inserted->next = NULL;
+    inserted->value = v;
+    if(q->size == 0)
+    {
+        q->tail = inserted; // Once forgot
+        q->head = q->tail;
+    }
+    else
+    {
+        q->tail->next = inserted; // Once misplaced
+        q->tail = inserted;
+    }
+    q->size ++;
     /* Remember: It should operate in O(1) time */
-    return false;
+    return true;
 }
 
 /*
@@ -65,6 +113,13 @@ bool q_insert_tail(queue_t *q, int v)
 */
 bool q_remove_head(queue_t *q, int *vp)
 {
+    if(q == NULL || q->size == 0 || vp == NULL)
+        return false;
+    list_ele_t *removed = q->head;
+    *vp = removed->value; // By pointer
+    q->head = q->head->next;
+    q->size --;
+    free(removed);
     return true;
 }
 
@@ -74,6 +129,8 @@ bool q_remove_head(queue_t *q, int *vp)
  */
 int q_size(queue_t *q)
 {
+    if(q != NULL)
+        return q->size;
     /* Remember: It should operate in O(1) time */
     return 0;
 }
