@@ -63,23 +63,23 @@ class Tracer:
         #first check the make file can build the files
         commandResult = subprocess.call("make")
         if commandResult != 0:
-            print "Makefile build failed"
+            print("Makefile build failed")
             return False
         #the check that the make file updates qtest when queue.o is changed
         subprocess.call(["touch", "queue.c"])
         changeTime = os.path.getmtime("./qtest")
         commandResult = subprocess.call("make")
         if commandResult != 0:
-            print "Makefile build failed after queue.c was changed"
+            print("Makefile build failed after queue.c was changed")
             return False
         if changeTime == os.path.getmtime("./qtest"):
-            print "qtest was not updated when queue.c was changed"
+            print("qtest was not updated when queue.c was changed")
             return False
         return True
 
     def runTrace(self, tid):
         if not tid in self.traceDict:
-            print "ERROR: No trace with id %d" % tid
+            print("ERROR: No trace with id %d" % tid)
             return False
         #trace 0 is not really a queue trace but instead a script to test
         #the make file
@@ -92,7 +92,7 @@ class Tracer:
             try:
                 retcode = subprocess.call(clist)
             except Exception as e:
-                print "Call of '%s' failed: %s" % (" ".join(clist), e)
+                print("Call of '%s' failed: %s" % (" ".join(clist), e))
                 return False
             return retcode == 0
 
@@ -100,12 +100,12 @@ class Tracer:
         scoreDict = { }
         for k in self.traceDict.keys():
             scoreDict[k] = 0
-        print "---\tTrace\t\tPoints"
+        print("---\tTrace\t\tPoints")
         if tid == 0:
             tidList = self.traceDict.keys()
         else:
             if not tid in self.traceDict:
-                print "ERROR: Invalid trace ID %d" % tid
+                print("ERROR: Invalid trace ID %d" % tid)
                 return
             tidList = [tid]
         score = 0
@@ -113,15 +113,15 @@ class Tracer:
         for t in tidList:
             tname = self.traceDict[t]
             if self.verbLevel > 0:
-                print "+++ TESTING trace %s:" % tname
+                print("+++ TESTING trace %s:" % tname)
             ok = self.runTrace(t)
             maxval = self.maxScores[t]
             tval = maxval if ok else 0
-            print "---\t%s\t%d/%d" % (tname, tval, maxval)
+            print("---\t%s\t%d/%d" % (tname, tval, maxval))
             score += tval
             maxscore += maxval
             scoreDict[t] = tval
-        print "---\tTOTAL\t\t%d/%d" % (score, maxscore)
+        print("---\tTOTAL\t\t%d/%d" % (score, maxscore))
         if self.autograde:
             # Generate JSON string
             jstring = '{"scores": {'
@@ -132,14 +132,14 @@ class Tracer:
                 first = False
                 jstring += '"%s" : %d' % (self.traceProbs[k], scoreDict[k])
             jstring += '}}'
-            print jstring
+            print(jstring)
 
 def usage(name):
-    print "Usage: %s [-h] [-p PROG] [-t TID] [-v VLEVEL]" % name
-    print "  -h        Print this message"
-    print "  -p PROG   Program to test"
-    print "  -t TID    Trace ID to test"
-    print "  -v VLEVEL Set verbosity level (0-3)"
+    print("Usage: %s [-h] [-p PROG] [-t TID] [-v VLEVEL]" % name)
+    print("  -h        print this message")
+    print("  -p PROG   Program to test")
+    print("  -t TID    Trace ID to test")
+    print("  -v VLEVEL Set verbosity level (0-3)")
     sys.exit(0)
 
 def run(name, args):
@@ -164,7 +164,7 @@ def run(name, args):
         elif opt == '-A':
             autograde = True
         else:
-            print "Unrecognized option '%s'" % opt
+            print("Unrecognized option '%s'" % opt)
             usage(name)
     if not levelFixed and autograde:
         vlevel = 0
