@@ -142,8 +142,55 @@ int q_size(queue_t *q)
   calling q_insert_head or q_remove_head).  Instead, it should modify
   the pointers in the existing data structure.
  */
+// Inefficient one
+// Time consuming O(n^2)
+// 有點像先出隊再進隊,in-place。
+/*
 void q_reverse(queue_t *q)
 {
-
+    list_ele_t *new_head, *new_tail, *new_present, *temp;
+    if(q == NULL || q->size == 0 || q->size == 1)
+        return;
+    new_head = q->tail;
+    new_tail = q->head;
+    new_present = new_head;
+    for(int i = 1; i < q->size; ++i)
+    {
+        temp = q->head;
+        for(int j = 1; j < q->size - i; ++j)
+        {
+            temp = temp->next;
+        }
+        new_present->next = temp;
+        new_present = temp;
+    }
+    q->head = new_head;
+    q->tail = new_tail;
+    q->tail->next = NULL;
 }
+*/
 
+// Efficient one O(n)
+// 相當於改變了排隊時各人朝向
+void q_reverse(queue_t *q)
+{
+    list_ele_t *current, *previous, *next, *tmp;
+    list_ele_t *new_head, *new_tail;
+    if(q == NULL || q->size == 0 || q->size == 1)
+        return;
+    new_head = q->tail;
+    new_tail = q->head;
+    tmp = q->head;
+    next = q->head->next;
+    for(int i = 1; i < q->size; ++i)
+    {
+        previous = tmp;
+        tmp = next;
+        current = tmp;
+        next = tmp->next; //Once I used tmp = tmp->next
+        current->next = previous;
+    }
+    q->head = new_head;
+    q->tail = new_tail;
+    q->tail->next = NULL;
+}
